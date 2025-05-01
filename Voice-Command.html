@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8">
+  <title>Jelhan 2.0 - Voice Assistant</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #ff6600;
+      color: white;
+      cursor: pointer;
+      margin: 10px;
+    }
+    .command-box {
+      margin-top: 30px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jelhan 2.0 - Voice Assistant</h1>
+  <button onclick="startListening()">Simulan</button>
+  <button onclick="stopListening()">Itigil</button>
+  <div class="command-box" id="output">...</div>
+
+  <script>
+    const output = document.getElementById('output');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Hindi supported ang browser mo. Gumamit ng Google Chrome.");
+    } else {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'tl-PH';
+      recognition.continuous = true; // para tuloy-tuloy makinig
+      recognition.interimResults = false;
+
+      function startListening() {
+        output.innerText = "Nakikinig...";
+        recognition.start();
+      }
+
+      function stopListening() {
+        recognition.stop();
+        output.innerText = "Itinigil ang pakikinig.";
+      }
+
+      recognition.onresult = function(event) {
+        const command = event.results[event.results.length - 1][0].transcript.toLowerCase();
+        output.innerText = `Narinig: "${command}"`;
+
+        if (command.includes("mobile legends")) {
+          speak("Okay po master, binubuksan ko ang Mobile Legends.");
+        } else if (command.includes("kumusta ka")) {
+          speak("Okay lang po master, salamat sa tanong.");
+        } else {
+          speak("Okay po master.");
+        }
+      };
+
+      recognition.onerror = function(event) {
+        output.innerText = `May error: ${event.error}`;
+      };
+
+      function speak(text) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'tl-PH';
+        synth.speak(utterance);
+      }
+    }
+  </script>
+</body>
+</html>
